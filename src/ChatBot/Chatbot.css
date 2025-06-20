@@ -1,24 +1,27 @@
+@import "tailwindcss";
+
 body {
   margin: 0;
   padding: 0;
   font-family: 'Segoe UI', sans-serif;
   background-color: #0077c8; /* Azul Loyola */
+  height: 100vh;
+  width: 100vw;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100vh;
 }
 
-/* Contenedor principal con borde azul */
 .chatbot-container {
-   border: 8px solid #0077c8;
+  border: 8px solid #0077c8;
   background-color: #ffffff;
   border-radius: 20px;
   padding: 40px 30px 100px 30px;
-  margin: 20px; /* para que se vea borde azul alrededor */
+  margin: 40px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-  width: 600px;  /* tamaño fijo, ajusta a tu gusto */
-  height: 80vh;  /* altura relativa, puedes ajustar */
+  width: 900vw;              /* ocupa casi todo el ancho */
+  max-width: 1000px;         /* límite razonable */
+  height: 90vh;             /* ocupa casi toda la altura */
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -89,7 +92,7 @@ body {
   border-bottom-right-radius: 0;
 }
 
-/* El área de entrada fija al fondo */
+/* Área de entrada fija al fondo */
 .chat-input-area {
   width: 100%;
   position: absolute;
@@ -132,3 +135,18 @@ body {
   background-color: #005fa3;
 }
 
+.message-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; /* por defecto */
+}
+
+.message-wrapper.right {
+  align-items: flex-end;
+}
+
+.sender-name {
+  font-size: 0.75rem;
+  color: #555;
+  margin-bottom: 4px;
+}
