@@ -2,6 +2,7 @@ import React from 'react';
 import './Chatbot.css'; 
 import axios from 'axios';
 
+
 export default function Chatbot() {
   const [messages, setMessages] = React.useState([]);
   const [input, setInput] = React.useState('');
@@ -27,7 +28,7 @@ export default function Chatbot() {
         ]
       }, {
         headers: {
-          'Authorization': `Bearer ${process.env.REACT_APP_OPENAI_API_KEY}`, // Asegúrate de tener tu clave API en un archivo .env
+          'Authorization': `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
           'Content-Type': 'application/json'
         }
       });
@@ -65,17 +66,27 @@ export default function Chatbot() {
       <div className="chat-input-area">
         <form onSubmit={handleSubmit}>
           <textarea
-            className="textareaInput"
-            id="textareaInput"
-            cols="70"
-            rows="2"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Escribe tu mensaje aquí..."
-          />
+          className="textareaInput"
+          id="textareaInput"
+          cols="70"
+          rows="2"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Escribe tu mensaje aquí..."
+          onKeyDown={(e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        document.querySelector('form').dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+      }
+    }}
+  />
+
           <button type="submit">Enviar</button>
         </form>
       </div>
     </div>
   );
+  console.log('CLAVE API:', import.meta.env.VITE_OPENAI_API_KEY);
+
+
 }
