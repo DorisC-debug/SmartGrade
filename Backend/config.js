@@ -2,16 +2,26 @@
 
 export const dbSettings = {
   user: 'usuario1',
-  password: 'prisi2203ljnA@',
-  server: 'PRISILA',         // Solo el host
-  database: 'PROJECT',
+  password: 'doris19',
+  server: 'DESKTOP-16NKLSN',         // Solo el host
+  database: 'SmartGrade',
   options: {
     encrypt: false,
-    trustServerCertificate: true,
-    instanceName: 'SQLEXPRESS' // Aquí va la instancia
+      trustServerCertificate: true
   }
 };
 
+ export default {
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        secure: false
+      }
+    }
+  }
+}
 
 export const PORT = 3000;
 export const SALT_ROUNDS = 10;

@@ -150,3 +150,16 @@ body {
   color: #555;
   margin-bottom: 4px;
 }
+
+.bubble strong {
+  font-weight: bold;
+}
+
+.bubble ul,
+.bubble ol {
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+}
+.bubble li {
+  margin-bottom: 0.5rem;
+}

@@ -12,11 +12,12 @@ export function Login({ onLoginSuccess, switchToRegister}) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      await axios.post('http://localhost:3000/login', {
-        correo,
-        contraseña
-      })
-      onLoginSuccess()
+      const response = await axios.post('http://localhost:3000/login', {
+          correo,
+          contraseña
+        })
+        onLoginSuccess(response.data)  // enviar datos usuario
+
     } catch (err) {
       setError(err.response?.data || 'Credenciales incorrectas')
     }

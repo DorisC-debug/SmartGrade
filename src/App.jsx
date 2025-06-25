@@ -1,15 +1,10 @@
-<<<<<<< Updated upstream
+
 import React, { useState } from 'react';
 import  {Login} from './Login/LoginTemp.jsx';
 import { Register } from './Login/register.jsx';
 import Chatbot  from './ChatBot/Chatbot.jsx';
 import './App.css';
-=======
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
-import Chatbot from './ChatBot/Chatbot'; 
->>>>>>> Stashed changes
+
 
 export default function App() {
   const [user, setUser] = useState(null);

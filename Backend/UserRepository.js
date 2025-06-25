@@ -20,29 +20,31 @@ export class UserRepository {
     }
   }
 
-  // Crear nuevo estudiante (sin hash)
-  static async create({ correo, contraseña }) {
-    this.validateCorreo(correo)
-    this.validatePassword(contraseña)
+  static async create({ nombre, correo, contraseña }) {
+  console.log('→ Datos en create:', { nombre, correo, contraseña })
 
-    const pool = await this.connect()
+  this.validateCorreo(correo)
+  this.validatePassword(contraseña)
 
-    const check = await pool.request()
-      .input('correo', sql.NVarChar, correo)
-      .query('SELECT * FROM Estudiante WHERE correo = @correo')
+  const pool = await this.connect()
 
-    if (check.recordset.length > 0) {
-      throw new Error('Ya existe un usuario con este correo.')
-    }
+  const check = await pool.request()
+    .input('correo', sql.NVarChar, correo)
+    .query('SELECT * FROM Estudiante WHERE correo = @correo')
 
-    await pool.request()
-      .input('correo', sql.NVarChar, correo)
-      .input('contraseña', sql.NVarChar, contraseña)  // sin hash
-      .query(`INSERT INTO Estudiante ([correo], [contraseña])
-              VALUES (@correo, @contraseña)`)
-
-    return correo
+  if (check.recordset.length > 0) {
+    throw new Error('Ya existe un usuario con este correo.')
   }
+
+  await pool.request()
+    .input('nombre', sql.NVarChar, nombre)
+    .input('correo', sql.NVarChar, correo)
+    .input('contraseña', sql.NVarChar, contraseña)
+    .query(`INSERT INTO Estudiante (nombre, correo, contraseña)
+            VALUES (@nombre, @correo, @contraseña)`)
+
+  return correo
+}
 
   // Login de estudiante (sin hash)
   static async login({ correo, contraseña }) {
@@ -66,8 +68,7 @@ export class UserRepository {
     return {
       id: user.id,
       nombre: user.nombre,
-      correo: user.correo,
-      carrera_id: user.carrera_id
+      correo: user.correo
     }
   }
 
@@ -83,4 +84,28 @@ export class UserRepository {
       throw new Error('La contraseña debe tener al menos 8 caracteres.')
     }
   }
+
+  static async getPrerrequisitosGraduacion() {
+    const pool = await this.connect()
+
+    const result = await pool.request()
+      .query(`SELECT descripcion FROM [SmartGrade].[dbo].[prerrequisitos_graduacion]`)
+
+    return result.recordset
+  }
+
+  // Obtener todos los registros de la vista completa (sin filtrar por carrera)
+  static async getVistaCompletaMaterias() {
+    const pool = await this.connect()
+
+    const result = await pool.request()
+      .query(`
+        SELECT *
+        FROM [SmartGrade].[dbo].[Vista_Completa_Materias]
+        ORDER BY id_carrera ASC, semestre_recomendado ASC
+      `)
+
+    return result.recordset
+  }
 }
+
