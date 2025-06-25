@@ -1,7 +1,8 @@
 import express from 'express'
 import cors from 'cors'
-import { PORT } from './config.js'
+import { PORT } from './connections/config.js'
 import { UserRepository } from './UserRepository.js'
+
 
 const app = express()
 app.use(cors())  // Permite peticiones desde frontend (puertos diferentes)

@@ -1,5 +1,5 @@
 import sql from 'mssql'
-import { dbSettings } from './config.js'
+import { dbSettings } from './connections/config.js'
 
 export class UserRepository {
   static async connect() {

@@ -14,12 +14,15 @@
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "db-local": "^3.1.0",
     "express": "^5.1.0",
     "msnodesqlv8": "^4.5.0",
     "mssql": "^11.0.1",
+    "nodemailer": "^7.0.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.2",
     "tailwindcss": "^4.1.10"
   },
   "devDependencies": {
