@@ -32,7 +32,8 @@ export default function App() {
     );
   }
 
-  return (
+  
+ return (
     <div className="auth-container">
   {view === 'login' ? (
     <Login onLoginSuccess={handleLoginSuccess} switchToRegister={() => setView('register')} />
@@ -40,6 +41,8 @@ export default function App() {
     <Register onRegisterSuccess={handleRegisterSuccess} switchToLogin={() => setView('login')} />
   )}
 </div>
-
   );
+
+
+ 
 }

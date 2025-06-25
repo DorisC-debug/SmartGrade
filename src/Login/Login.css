@@ -1,5 +1,5 @@
 .card {
-  width: 260px;
+  width: 360px;
   padding: 2rem 1.5rem;
   text-align: center;
   background: #0082CB; /* Fondo azul solicitado */
@@ -64,7 +64,7 @@
   color: #ffffff;
   display: block;
   font-size: .8em;
-  margin-top: .10rem;
+  margin-top: .8rem;
   text-decoration: none;
   transition: color .3s ease-out;
  
@@ -74,6 +74,7 @@
   background-color: #5e6681;
   color: #ffeba7;
   box-shadow: 0 8px 24px 0 rgb(16 39 112 / 20%);
+  margin-top: .8em;
 }
 
 .btn-link:hover {
@@ -92,6 +93,7 @@
 .switch-view {
   font-size: 17px;
   padding: 0.6em 3em;
+  margin-bottom: 5%;
   font-weight: 500;
   background: #006dac;
   color: white;
@@ -104,9 +106,15 @@
 
 
 }
-
 .switch-view{
   color: #ffffff;
   align-items: center;
+  
 }
+
+.switch-container {
+  margin-top: 15px; 
+  text-align: center;
+}
+
 
