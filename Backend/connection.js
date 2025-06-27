@@ -1,5 +1,8 @@
+// connection.js
 import sql from 'mssql';
 import { dbSettings } from './config.js'
+
+export let poolPromise = sql.connect(dbSettings);
 
 export async function getConnection() {
   try {
@@ -10,3 +13,4 @@ export async function getConnection() {
     throw error
   }
 }
+

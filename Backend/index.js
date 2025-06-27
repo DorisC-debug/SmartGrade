@@ -1,9 +1,8 @@
 import express from 'express'
 import cors from 'cors'
-import { PORT } from './connections/config.js'
+import { PORT } from './config.js'
 import { UserRepository } from './UserRepository.js'
 import { calcularRutaOrdenadaConCorrequisitos } from './RutaCritica.js'
-
 
 const app = express()
 app.use(cors())
@@ -39,8 +38,6 @@ app.get('/api/ruta-critica/:idCarrera', async (req, res) => {
   }
 });
 
-
-
 app.get('/', (req, res) => {
   res.send('Servidor backend funcionando')
 })
@@ -51,6 +48,8 @@ app.post('/login', async (req, res) => {
   try {
     const user = await UserRepository.login({ correo, contraseña })
     res.send(user)
+
+
   } catch (error) {
     res.status(401).send(error.message)
   }
@@ -101,4 +100,34 @@ app.listen(PORT, () => {
 })
 
 
+app.get('/api/estudiante-id', async (req, res) => {
+  try {
+    const correo = req.query.correo;
+    if (!correo) return res.status(400).send({ error: 'Correo no proporcionado.' });
 
+    const id = await UserRepository.getEstudianteIdByCorreo(correo);
+    res.json({ id });
+  } catch (error) {
+    console.error('Error en /api/estudiante-id:', error.message);
+    res.status(500).send({ error: 'Error interno al obtener ID del estudiante.' });
+    console.error('Error en /api/estudiante-id:', error);
+  }
+});
+
+app.post('/api/guardar-datos-chatbot', async (req, res) => {
+  console.log('📥 Datos recibidos en API:', req.body);
+
+  const { estudiante_id, carrera_id, materiasCursadas } = req.body;
+
+  if (!estudiante_id || !carrera_id) {
+    return res.status(400).json({ error: 'Faltan datos necesarios.' });
+  }
+
+  try {
+    await UserRepository.guardarDatosChatbot({ estudiante_id, carrera_id, materiasCursadas });
+    res.json({ mensaje: 'Datos guardados correctamente.' });
+  } catch (error) {
+    console.error('❌ Error al guardar datos del chatbot:', error);
+    res.status(500).json({ error: 'No se pudieron guardar los datos del chatbot.' });
+  }
+});

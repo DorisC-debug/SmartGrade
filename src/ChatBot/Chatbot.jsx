@@ -86,8 +86,33 @@ export default function Chatbot() {
   setMaxMateriasUsuario(num);
   setEstado('final');
   setMessages((prev) => [...prev, { role: 'assistant', content: 'Calculando ruta crítica basada en tus datos...' }]);
+   console.log('Materias cursadas:', materiasCursadas);
+  console.log('idCarrera:',idCarrera);
 
+  const correo = localStorage.getItem('correo')
+ 
   try {
+  const response = await axios.get('http://localhost:3000/api/estudiante-id', {
+    params: { correo }
+  });
+
+  const estudianteId = response.data.id;
+
+  console.log("Materias cursadas:", materiasCursadas);
+  console.log("idCarrera:", idCarrera);
+  console.log("correo:", correo);
+
+  await axios.post('http://localhost:3000/api/guardar-datos-chatbot', {
+    estudiante_id: estudianteId,
+    carrera_id: idCarrera,
+    materiasCursadas: materiasCursadas
+  });
+
+
+      console.log('✅ Datos de carrera y materias guardados');
+
+
+
     const [rutaCritica, prerrequisitos] = await Promise.all([
       axios.get(`http://localhost:3000/api/ruta-critica/${idCarrera}?limitePorCuatrimestre=${num}`),
       axios.get('http://localhost:3000/api/prerrequisitos')
@@ -168,11 +193,13 @@ export default function Chatbot() {
       }]);
     }
   } catch (err) {
-    setMessages(prev => [...prev, {
-      role: 'assistant',
-      content: 'Hubo un error obteniendo la ruta crítica. Detalles técnicos: ' + (err.response?.data?.message || err.message)
-    }]);
-  }
+  setMessages(prev => [...prev, {
+    role: 'assistant',
+    content: 'Hubo un error obteniendo la ruta crítica. Detalles técnicos: ' + (err.response?.data?.message || err.message)
+  }]);
+  console.error('Detalles del error SQL:', err.originalError || err); // ✅ corregido
+}
+
 }
 };
 

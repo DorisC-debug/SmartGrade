@@ -16,6 +16,8 @@ export function Login({ onLoginSuccess, switchToRegister}) {
           correo,
           contraseña
         })
+        
+        localStorage.setItem('correo', correo)
         onLoginSuccess(response.data)  // enviar datos usuario
 
     } catch (err) {
