@@ -1,14 +1,13 @@
-
 import React, { useState } from 'react';
-import  {Login} from './Login/LoginTemp.jsx';
+import { Login } from './Login/LoginTemp.jsx';
 import { Register } from './Login/register.jsx';
-import Chatbot  from './ChatBot/Chatbot.jsx';
+import Chatbot from './ChatBot/Chatbot.jsx';
+import Landing from './Landing/Landing.jsx';
 import './App.css';
-
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [view, setView] = useState('login'); // login o register
+  const [view, setView] = useState('landing'); // 'landing', 'login', 'register'
 
   const handleLoginSuccess = (userData) => {
     setUser(userData);
@@ -21,6 +20,7 @@ export default function App() {
 
   const handleLogout = () => {
     setUser(null);
+    setView('landing');
   };
 
   if (user) {
@@ -34,17 +34,21 @@ export default function App() {
     );
   }
 
-  
- return (
+  return (
     <div className="auth-container">
-  {view === 'login' ? (
-    <Login onLoginSuccess={handleLoginSuccess} switchToRegister={() => setView('register')} />
-  ) : (
-    <Register onRegisterSuccess={handleRegisterSuccess} switchToLogin={() => setView('login')} />
-  )}
-</div>
+      {view === 'landing' && <Landing onStart={() => setView('login')} />}
+      {view === 'login' && (
+        <Login
+          onLoginSuccess={handleLoginSuccess}
+          switchToRegister={() => setView('register')}
+        />
+      )}
+      {view === 'register' && (
+        <Register
+          onRegisterSuccess={handleRegisterSuccess}
+          switchToLogin={() => setView('login')}
+        />
+      )}
+    </div>
   );
-
-
- 
 }

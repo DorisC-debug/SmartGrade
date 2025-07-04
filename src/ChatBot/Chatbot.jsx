@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 
 export default function Chatbot() {
   const [messages, setMessages] = React.useState([
-    { role: 'assistant', content: 'Hola, soy SmartGrade, tu asistente académico.' },
+    { role: 'assistant', content: 'Hola, soy SmartGrade, tu asistente académico. Te ayudaré a ver la ruta crítica de tu carrera, por favor responde las preguntas como se te indique.' },
     { role: 'assistant', content: '¿Cuál es tu carrera? (Ej: ingeniería industrial)' }
   ]);
   const [input, setInput] = React.useState('');
@@ -13,6 +13,12 @@ export default function Chatbot() {
   const [materiasCursadas, setMateriasCursadas] = React.useState([]);
   const [maxMateriasUsuario, setMaxMateriasUsuario] = React.useState(null);
   const [estado, setEstado] = React.useState('pedir_carrera');
+
+  const messagesEndRef = React.useRef(null);
+
+  React.useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const detectarIdCarrera = (texto) => {
     const t = texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -50,8 +56,8 @@ export default function Chatbot() {
 
       setIdCarrera(idDetectado);
       setMessages((prev) => [...prev,
-        { role: 'assistant', content: `Carrera detectada: **${nombreCarrera}**` },
-        { role: 'assistant', content: '¿Has cursado alguna materia? (sí/no)' }
+      { role: 'assistant', content: `Carrera detectada: **${nombreCarrera}**` },
+      { role: 'assistant', content: '¿Has cursado alguna materia? (sí/no)' }
       ]);
       setEstado('inicio');
       return;
@@ -76,134 +82,118 @@ export default function Chatbot() {
       return;
     }
 
-   if (estado === 'pedir_max') {
-  const num = parseInt(texto);
-  if (isNaN(num) || num <= 0) {
-    setMessages((prev) => [...prev, { role: 'assistant', content: 'Por favor escribe un número válido mayor a 0.' }]);
-    return;
-  }
-
-  setMaxMateriasUsuario(num);
-  setEstado('final');
-  setMessages((prev) => [...prev, { role: 'assistant', content: 'Calculando ruta crítica basada en tus datos...' }]);
-   console.log('Materias cursadas:', materiasCursadas);
-  console.log('idCarrera:',idCarrera);
-
-  const correo = localStorage.getItem('correo')
- 
-  try {
-  const response = await axios.get('http://localhost:3000/api/estudiante-id', {
-    params: { correo }
-  });
-
-  const estudianteId = response.data.id;
-
-  console.log("Materias cursadas:", materiasCursadas);
-  console.log("idCarrera:", idCarrera);
-  console.log("correo:", correo);
-
-  await axios.post('http://localhost:3000/api/guardar-datos-chatbot', {
-    estudiante_id: estudianteId,
-    carrera_id: idCarrera,
-    materiasCursadas: materiasCursadas
-  });
-
-
-      console.log('✅ Datos de carrera y materias guardados');
-
-
-
-    const [rutaCritica, prerrequisitos] = await Promise.all([
-      axios.get(`http://localhost:3000/api/ruta-critica/${idCarrera}?limitePorCuatrimestre=${num}`),
-      axios.get('http://localhost:3000/api/prerrequisitos')
-    ]);
-
-    console.log('Datos recibidos ruta:', rutaCritica.data);
-    console.log('Datos recibidos ruta crítica:', rutaCritica.data.rutaCritica);
-
-
-
-    const cuatrimestres = rutaCritica.data?.ruta;
-
-    // Validación de estructura
-    if (!Array.isArray(cuatrimestres) || !cuatrimestres.every(c => Array.isArray(c))) {
-        setMessages(prev => [...prev, {
-          role: 'assistant',
-          content: 'Error: la ruta crítica recibida no tiene la estructura esperada.'
-        }]);
+    if (estado === 'pedir_max') {
+      const num = parseInt(texto);
+      if (isNaN(num) || num <= 0) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: 'Por favor escribe un número válido mayor a 0.' }]);
         return;
       }
 
-    for (let i = 0; i < cuatrimestres.length; i++) {
-      if (!Array.isArray(cuatrimestres[i])) {
+      setMaxMateriasUsuario(num);
+      setEstado('final');
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'Calculando ruta crítica basada en tus datos...' }]);
+
+      const correo = localStorage.getItem('correo');
+
+      try {
+        const response = await axios.get('http://localhost:3000/api/estudiante-id', {
+          params: { correo }
+        });
+
+        const estudianteId = response.data.id;
+
+        await axios.post('http://localhost:3000/api/guardar-datos-chatbot', {
+          estudiante_id: estudianteId,
+          carrera_id: idCarrera,
+          materiasCursadas: materiasCursadas
+        });
+
+        const [rutaCritica, prerrequisitos] = await Promise.all([
+          axios.get(`http://localhost:3000/api/ruta-critica/${idCarrera}?limitePorCuatrimestre=${num}`),
+          axios.get('http://localhost:3000/api/prerrequisitos')
+        ]);
+
+        const cuatrimestres = rutaCritica.data?.ruta;
+
+        if (!Array.isArray(cuatrimestres) || !cuatrimestres.every(c => Array.isArray(c))) {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: 'Error: la ruta crítica recibida no tiene la estructura esperada.'
+          }]);
+          return;
+        }
+
+        const materias = cuatrimestres.flatMap(cuatri => Array.isArray(cuatri) ? cuatri : []);
+
+        const normalizar = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+
+        const materiasFiltradas = materias.filter(m =>
+          !materiasCursadas.some(mc => normalizar(mc) === normalizar(m.nombre_materia))
+        );
+
+        const organizadas = [];
+        let i = 0;
+        while (i < materiasFiltradas.length) {
+          organizadas.push(materiasFiltradas.slice(i, i + num));
+          i += num;
+        }
+
+        organizadas.forEach((cuatri, idx) => {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: `**Cuatrimestre ${idx + 1}:**\n` + cuatri.map(m => '- ' + m.nombre_materia).join('\n')
+          }]);
+        });
+
+        if (Array.isArray(rutaCritica.data?.rutaCritica)) {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: '**Ruta Crítica Completa:**\n' + rutaCritica.data.rutaCritica.map(m => '- ' + m.nombre_materia).join('\n')
+          }]);
+        }
+
+        if (Array.isArray(prerrequisitos.data)) {
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: '**Prerrequisitos de Graduación:**\n' + prerrequisitos.data.map(p => '- ' + p.descripcion).join('\n')
+          }]);
+          setMessages(prev => [...prev, {
+            role: 'assistant',
+            content: 'Recuerda que los prerrequisitos son materias que debes aprobar antes de cursar otras. Asegúrate de cumplir con ellos para evitar inconvenientes en tu trayectoria académica. Muchas gracias por usar SmartGrade.'
+          }]);
+        }
+      } catch (err) {
         setMessages(prev => [...prev, {
           role: 'assistant',
-          content: `Error: El cuatrimestre ${i + 1} no es una lista válida de materias.`
+          content: 'Hubo un error obteniendo la ruta crítica. Detalles técnicos: ' + (err.response?.data?.message || err.message)
         }]);
-        return;
+        console.error('Detalles del error SQL:', err.originalError || err);
       }
-    }
-
-    // Validación de número de materias por cuatrimestre
-    if (typeof num !== 'number' || num <= 0) {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: 'Error: El número de materias por cuatrimestre no es válido.'
-      }]);
       return;
     }
 
-    const materias = cuatrimestres.flatMap(cuatri => Array.isArray(cuatri) ? cuatri : []);
-
-    // Filtrado de materias cursadas con normalización
-    const normalizar = (str) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
-
-    const materiasFiltradas = materias.filter(m =>
-      !materiasCursadas.some(mc => normalizar(mc) === normalizar(m.nombre_materia))
-    );
-
-    // Agrupación en cuatrimestres según el límite establecido
-    const organizadas = [];
-    let i = 0;
-    while (i < materiasFiltradas.length) {
-      organizadas.push(materiasFiltradas.slice(i, i + num));
-      i += num;
-    }
-
-    organizadas.forEach((cuatri, idx) => {
+    try {
+      const openaiResponse = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: 'gpt-3.5-turbo',
+        messages: [...messages, userMessage],
+      }, {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: `**Cuatrimestre ${idx + 1}:**\n` + cuatri.map(m => '- ' + m.nombre_materia).join('\n')
+        content: openaiResponse.data.choices[0].message.content
       }]);
-    });
-
-    
-    // Mostrar ruta crítica completa original
-    if (Array.isArray(rutaCritica.data?.rutaCritica)) {
+    } catch (error) {
       setMessages(prev => [...prev, {
         role: 'assistant',
-        content: '**Ruta Crítica Completa:**\n' + rutaCritica.data.rutaCritica.map(m => '- ' + m.nombre_materia).join('\n')
+        content: 'No entendí tu mensaje y no pude consultar con la IA. Intenta reformular tu pregunta.'
       }]);
+      console.error('Error llamando a OpenAI:', error);
     }
-
-    if (Array.isArray(prerrequisitos.data)) {
-      setMessages(prev => [...prev, {
-        role: 'assistant',
-        content: '**Prerrequisitos de Graduación:**\n' + prerrequisitos.data.map(p => '- ' + p.descripcion).join('\n')
-      }]);
-    }
-  } catch (err) {
-  setMessages(prev => [...prev, {
-    role: 'assistant',
-    content: 'Hubo un error obteniendo la ruta crítica. Detalles técnicos: ' + (err.response?.data?.message || err.message)
-  }]);
-  console.error('Detalles del error SQL:', err.originalError || err); // ✅ corregido
-}
-
-}
-};
-
-
+  };
 
   return (
     <div className="chatbot-container">
@@ -226,6 +216,7 @@ export default function Chatbot() {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
 
       <div className="chat-input-area">

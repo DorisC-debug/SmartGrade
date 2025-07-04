@@ -115,7 +115,7 @@ app.get('/api/estudiante-id', async (req, res) => {
 });
 
 app.post('/api/guardar-datos-chatbot', async (req, res) => {
-  console.log('📥 Datos recibidos en API:', req.body);
+  console.log('Datos recibidos en API:', req.body);
 
   const { estudiante_id, carrera_id, materiasCursadas } = req.body;
 
@@ -127,7 +127,7 @@ app.post('/api/guardar-datos-chatbot', async (req, res) => {
     await UserRepository.guardarDatosChatbot({ estudiante_id, carrera_id, materiasCursadas });
     res.json({ mensaje: 'Datos guardados correctamente.' });
   } catch (error) {
-    console.error('❌ Error al guardar datos del chatbot:', error);
+    console.error('Error al guardar datos del chatbot:', error);
     res.status(500).json({ error: 'No se pudieron guardar los datos del chatbot.' });
   }
 });
