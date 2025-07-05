@@ -1,17 +1,18 @@
 
-
 export const dbSettings = {
   user: 'usuario1',
   password: 'doris19',
-  server: 'DESKTOP-16NKLSN',         // Solo el host
+  server: 'DESKTOP-16NKLSN',
   database: 'SmartGrade',
   options: {
     encrypt: false,
-      trustServerCertificate: true
+    trustServerCertificate: true
   }
+
 };
 
- export default {
+
+export default {
   server: {
     proxy: {
       '/api': {
