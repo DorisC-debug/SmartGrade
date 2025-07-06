@@ -3,10 +3,13 @@ import cors from 'cors'
 import { PORT } from './config.js'
 import { UserRepository } from './UserRepository.js'
 import { calcularRutaOrdenadaConCorrequisitos } from './RutaCritica.js'
+import bcrypt from 'bcrypt';
 
 const app = express()
 app.use(cors())
 app.use(express.json())
+
+
 
 
 app.get('/api/ruta-critica/:idCarrera', async (req, res) => {
@@ -43,35 +46,32 @@ app.get('/', (req, res) => {
 })
 
 app.post('/login', async (req, res) => {
-  const { correo, contraseña } = req.body
+  const { correo, contraseña } = req.body;
 
   try {
-    const user = await UserRepository.login({ correo, contraseña })
-    res.send(user)
-
-
+    const user = await UserRepository.login({ correo, contraseña });
+    res.send(user);
   } catch (error) {
-    res.status(401).send(error.message)
+    res.status(401).send(error.message);
   }
-})
-
+});
 app.post('/register', async (req, res) => {
-  const { nombre, correo, contraseña } = req.body
-  console.log('→ Recibido en /register:', req.body)
-  console.log('→ Nombre recibido:', nombre)
-
-  if (!nombre) {
-    return res.status(400).send('El campo nombre es obligatorio y no fue recibido.')
-  }
+  const { nombre, correo, contraseña } = req.body;
 
   try {
-    const id = await UserRepository.create({ nombre, correo, contraseña })
-    res.send({ id })
+    console.log('→ Contraseña original:', contraseña);
+    const correoRegistrado = await UserRepository.create({
+      nombre,
+      correo,
+      contraseña
+    });
+
+    res.status(201).json({ mensaje: 'Usuario registrado', correo: correoRegistrado });
   } catch (error) {
-    console.error('Error en /register:', error.message)
-    res.status(400).send(error.message)
+    console.error('❌ Error en /register:', error.message);
+    res.status(500).json({ error: error.message });
   }
-})
+});
 
 app.post('/logout', (req, res) => {
   // Aquí podrías invalidar sesión o token, dependiendo del método de auth que uses

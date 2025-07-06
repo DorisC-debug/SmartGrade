@@ -1,5 +1,8 @@
 import sql from 'mssql'
 import { dbSettings } from './config.js'
+import bcrypt from 'bcrypt'
+
+
 
 export class UserRepository {
   static async connect() {
@@ -19,7 +22,6 @@ export class UserRepository {
       throw new Error('Error al conectar a la base de datos: ' + error.message)
     }
   }
-
   static async create({ nombre, correo, contraseña }) {
     console.log('→ Datos en create:', { nombre, correo, contraseña })
 
@@ -36,39 +38,43 @@ export class UserRepository {
       throw new Error('Ya existe un usuario con este correo.')
     }
 
+
+    const hashedPassword = await bcrypt.hash(contraseña, 10)
+    console.log('→ Contraseña hasheada en create():', hashedPassword)
+
     await pool.request()
       .input('nombre', sql.NVarChar, nombre)
       .input('correo', sql.NVarChar, correo)
-      .input('contraseña', sql.NVarChar, contraseña)
+      .input('contraseña', sql.NVarChar, hashedPassword)
       .query(`INSERT INTO Estudiante (nombre, correo, contraseña)
-              VALUES (@nombre, @correo, @contraseña)`)
+            VALUES (@nombre, @correo, @contraseña)`)
 
     return correo
   }
 
   static async login({ correo, contraseña }) {
-    this.validateCorreo(correo)
-    this.validatePassword(contraseña)
+    this.validateCorreo(correo);
 
-    const pool = await this.connect()
+    const pool = await this.connect();
 
     const result = await pool.request()
       .input('correo', sql.NVarChar, correo)
-      .query(' SELECT * FROM Estudiante WHERE correo = @correo AND contraseña = @contraseña')
+      .query('SELECT * FROM Estudiante WHERE correo = @correo');
 
-    const user = result.recordset[0]
-    if (!user) throw new Error('Usuario no encontrado.')
+    const user = result.recordset[0];
+    if (!user) throw new Error('Usuario no encontrado.');
 
-    if (user.contraseña !== contraseña) {
-      throw new Error('Contraseña incorrecta.')
-    }
+    // Comparar la contraseña con bcrypt
+    const isMatch = await bcrypt.compare(contraseña, user.contraseña);
+    if (!isMatch) throw new Error('Contraseña incorrecta.');
 
     return {
       id: user.id,
       nombre: user.nombre,
       correo: user.correo
-    }
+    };
   }
+
 
   static validateCorreo(correo) {
     if (typeof correo !== 'string' || !correo.includes('@')) {
