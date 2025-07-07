@@ -1,0 +1,397 @@
+.landing {
+    width: 100vw;
+    height: 75vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    background: #0070b8;
+    background-image:
+        radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 150%),
+        radial-gradient(circle at 70% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 150%),
+        radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.1) 0%, transparent 150%);
+    background-repeat: no-repeat;
+    background-size: cover;
+    padding: 20px;
+}
+
+
+
+.landing-title {
+    font-size: 3.5em;
+    margin-bottom: 10px;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.landing-title span {
+    color: #f8f8f8;
+}
+
+.landing-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.landing-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.landing-logo {
+    height: 80px;
+    width: auto;
+}
+
+.landing-subtitle {
+    font-size: 1.3em;
+    margin-bottom: 40px;
+    color: #e0e0e0;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Contenedor de las 3 funciones */
+.features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2em;
+    margin-bottom: 50px;
+}
+
+/* Cada cuadro de función */
+.feature-box {
+    background-color: rgba(255, 255, 255, 0.1);
+    /* translúcido sobre azul */
+    color: #fff;
+    border-radius: 12px;
+    padding: 30px;
+    width: 290px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s;
+}
+
+.feature-box:hover {
+    transform: translateY(-5px);
+}
+
+.feature-box h3 {
+    font-size: 1.2em;
+    margin-bottom: 8px;
+    color: #ffffff;
+    margin: 0;
+}
+
+.feature-box p {
+    font-size: 0.95em;
+    color: #dcdcdc;
+}
+
+.feature-header {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.feature-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Texto de la palanca */
+.toggle-text {
+    margin: 30px 0 15px;
+    font-weight: bold;
+    font-size: 1.7em;
+    top: 40px;
+    position: relative;
+    color: #f8f8f8;
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    transition: top 0.3s ease-in-out;
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Footer */
+.landing-footer {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 0.85em;
+    color: #cfcfcf;
+    text-align: center;
+
+}
+
+.toggle-container {
+    --knob-size: 1.75em;
+    display: flex;
+    justify-content: center;
+    position: relative;
+    margin-top: 60px;
+}
+
+.toggle-input {
+    position: absolute;
+    z-index: 2;
+    bottom: 132.5%;
+    border-radius: 50%;
+    transform: rotate(-25deg);
+    transform-origin: 50% 4.75em;
+    width: var(--knob-size);
+    height: var(--knob-size);
+    opacity: 0;
+    /* fix em sizing */
+    font: inherit;
+    transition: transform .24s cubic-bezier(.65, 1.35, .5, 1);
+    cursor: pointer;
+}
+
+.toggle-input:checked {
+    transform: rotate(25deg);
+}
+
+.toggle-handle-wrapper {
+    position: absolute;
+    z-index: 1;
+    bottom: -135%;
+    -webkit-mask-image: linear-gradient(to bottom, #000 62.125%, transparent 50%);
+    mask-image: linear-gradient(to bottom, #000 62.125%, transparent 50%);
+    width: 200%;
+    overflow: hidden;
+}
+
+.toggle-handle {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: rotate(-25deg);
+    transform-origin: bottom center;
+    transition: transform .24s cubic-bezier(.65, 1.35, .5, 1);
+}
+
+.toggle-input:checked+.toggle-handle-wrapper>.toggle-handle {
+    transform: rotate(25deg);
+}
+
+.toggle-handle-knob {
+    position: relative;
+    z-index: 1;
+    border-radius: 50%;
+    width: var(--knob-size);
+    height: var(--knob-size);
+    background-image: radial-gradient(farthest-corner at 70% 30%, #fedee2 4%, #d63534 12% 24%, #a81a1a 50% 65%, #d63534 75%);
+    transition: transform .24s cubic-bezier(.65, 1.35, .5, 1);
+}
+
+.toggle-input:checked+.toggle-handle-wrapper .toggle-handle-knob {
+    transform: rotate(-90deg);
+}
+
+/* toggle handle knob hover inner shadow */
+.toggle-handle-knob::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    box-shadow: inset 0 0 8px 2px rgb(255 255 255 / .4);
+    opacity: 0;
+    transition: opacity .2s;
+}
+
+@media (hover: hover) {
+
+    .toggle-input:hover+.toggle-handle-wrapper .toggle-handle-knob::after,
+    .toggle-input:focus-visible+.toggle-handle-wrapper .toggle-handle-knob::after {
+        opacity: 1;
+    }
+}
+
+.toggle-handle-bar-wrapper {
+    position: relative;
+    width: .5em;
+    height: 3em;
+}
+
+.toggle-handle-bar {
+    position: absolute;
+    top: calc(var(--knob-size) / 2 * -1);
+    left: 0;
+    width: 100%;
+    height: calc(100% + var(--knob-size) / 2);
+    background-image: linear-gradient(to right, #777475, #a4a4a4, #fff 45% 55%, #a4a4a4, #777475);
+    background-position-x: .06125em;
+    transition: background-position-x .24s cubic-bezier(.65, 1.35, .5, 1);
+    box-shadow: inset 0 1em .25em rgb(0 0 0 / .4);
+}
+
+.toggle-input:checked+.toggle-handle-wrapper .toggle-handle-bar {
+    background-position-x: -.06125em;
+}
+
+.toggle-base {
+    position: relative;
+    border-radius: 3.125em;
+    padding: .25em;
+    width: 3.5em;
+    height: 1.125em;
+    background-color: #fff;
+    background-image: linear-gradient(to bottom, #fff, #d7d7d7);
+    box-shadow: 0 -.25em .5em #fff, 0 .25em .5em #d7d7d7;
+}
+
+.toggle-base-inside {
+    position: relative;
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom, #a6a6a6, #7d7d7d);
+    box-shadow: inset 0 .0625em rgb(255 255 255 / .2), inset 0 -.03125em rgb(255 255 255 / 1), inset 0 -.0625em .25em rgb(0 0 0 / .1);
+}
+
+/* toggle base inside active */
+.toggle-base-inside::after {
+    content: '';
+    position: absolute;
+    border-radius: inherit;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(to bottom, #5ab054, #438c3c);
+    box-shadow: inherit;
+    opacity: 0;
+    transition: opacity .24s cubic-bezier(.65, 1.35, .5, 1);
+}
+
+.toggle-input:checked~.toggle-base .toggle-base-inside::after {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .landing {
+        padding: 15px;
+        height: auto;
+    }
+
+    .landing-title {
+        font-size: 2rem;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .landing-subtitle {
+        font-size: 1rem;
+        margin-bottom: 30px;
+    }
+
+    .landing-logo {
+        height: 60px;
+    }
+
+    .features {
+        flex-direction: column;
+        gap: 1.5em;
+    }
+
+    .feature-box {
+        width: 100%;
+        max-width: 90vw;
+    }
+
+    .toggle-text {
+        font-size: 1.2em;
+        margin-top: 20px;
+    }
+
+    .toggle-container {
+        margin-top: 40px;
+    }
+
+    .landing-footer {
+        position: static;
+        margin-top: 40px;
+        font-size: 0.75em;
+    }
+}
+
+/* ========= ANIMACIONES ========= */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(40px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Aplicamos animación a todos los elementos clave */
+.landing-logo,
+.landing-title,
+.landing-subtitle,
+.feature-box,
+.toggle-text,
+.toggle-container,
+.landing-footer {
+    animation: fadeInUp 0.8s ease-out;
+    animation-fill-mode: both;
+}
+
+/* Cascada de aparición con delays */
+.landing-logo {
+    animation-delay: 0.2s;
+}
+
+.landing-title {
+    animation-delay: 0.2s;
+}
+
+.landing-subtitle {
+    animation-delay: 0.4s;
+}
+
+.feature-box:nth-child(1) {
+    animation-delay: 0.6s;
+}
+
+.feature-box:nth-child(2) {
+    animation-delay: 0.8s;
+}
+
+.feature-box:nth-child(3) {
+    animation-delay: 1s;
+}
+
+.toggle-text {
+    animation-delay: 1.2s;
+}
+
+.toggle-container {
+    animation-delay: 1.3s;
+}
+
+.landing-footer {
+    animation-delay: 1.4s;
+}

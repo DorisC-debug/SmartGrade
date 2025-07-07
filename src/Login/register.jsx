@@ -16,6 +16,7 @@ export function Register({ onRegisterSuccess, switchToLogin }) {
         correo,
         contraseña
       })
+      localStorage.setItem('correo', correo) // guardar correo en localStorage
       onRegisterSuccess()
     } catch (err) {
       setError(err.response?.data || 'Error al registrarse')
