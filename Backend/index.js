@@ -3,14 +3,10 @@ import cors from 'cors'
 import { PORT } from './config.js'
 import { UserRepository } from './UserRepository.js'
 import { calcularRutaOrdenadaConCorrequisitos } from './RutaCritica.js'
-import bcrypt from 'bcrypt';
 
 const app = express()
 app.use(cors())
 app.use(express.json())
-
-
-
 
 app.get('/api/ruta-critica/:idCarrera', async (req, res) => {
   const idCarrera = parseInt(req.params.idCarrera);
