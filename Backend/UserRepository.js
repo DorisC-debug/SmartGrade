@@ -44,32 +44,31 @@ export class UserRepository {
     return correo
   }
 
-  // Login de estudiante (sin hash)
+  // Login de estudiante 
   static async login({ correo, contraseña }) {
-    this.validateCorreo(correo)
-    this.validatePassword(contraseña)
+  this.validateCorreo(correo);
+  this.validatePassword(contraseña);
 
-    const pool = await this.connect()
+  const pool = await this.connect();
 
-    const result = await pool.request()
-      .input('correo', sql.NVarChar, correo)
-      .query('SELECT * FROM Estudiante WHERE correo = @correo')
+  const result = await pool.request()
+    .input('correo', sql.NVarChar, correo)
+    .input('contraseña', sql.NVarChar, contraseña)
+    .query(`
+      SELECT nombre, correo, verificado
+      FROM Estudiante
+      WHERE correo = @correo AND contraseña = @contraseña
+    `);
 
-    const user = result.recordset[0]
-    if (!user) throw new Error('Usuario no encontrado.')
+  const user = result.recordset[0];
+  if (!user) throw new Error('Correo o contraseña incorrectos');
 
-    // Comparación directa de contraseñas (texto plano)
-    if (user.contraseña !== contraseña) {
-      throw new Error('Contraseña incorrecta.')
-    }
-
-    return {
-      id: user.id,
-      nombre: user.nombre,
-      correo: user.correo,
-      carrera_id: user.carrera_id
-    }
-  }
+  return {
+    nombre: user.nombre,
+    correo: user.correo,
+    verificado: Boolean(user.verificado) // Asegura que sea un booleano
+  };
+}
 
   // Validaciones
   static validateCorreo(correo) {
@@ -83,4 +82,40 @@ export class UserRepository {
       throw new Error('La contraseña debe tener al menos 8 caracteres.')
     }
   }
+  static async findByCorreo(correo) {
+    this.validateCorreo(correo);
+
+    const pool = await this.connect();
+
+    const result = await pool.request()
+      .input('correo', sql.NVarChar, correo)
+      .query('SELECT * FROM Estudiante WHERE correo = @correo');
+
+    return result.recordset.length > 0 ? result.recordset[0] : null;
+  }
+  
+  static async updatePassword(correo, nuevaContraseña) {
+    this.validateCorreo(correo);
+    this.validatePassword(nuevaContraseña);
+
+    const pool = await this.connect();
+
+    const result = await pool.request()
+      .input('correo', sql.NVarChar, correo)
+      .input('nuevaContraseña', sql.NVarChar, nuevaContraseña)
+      .query('UPDATE Estudiante SET contraseña = @nuevaContraseña WHERE correo = @correo');
+
+    return result.rowsAffected[0] > 0;
+  }
+
+  // Marca un usuario como verificado
+  static async marcarComoVerificado(correo) {
+    const pool = await this.connect();
+    await pool.request()
+    .input('correo', sql.VarChar, correo)
+    .query('UPDATE Estudiante SET verificado = 1 WHERE correo = @correo');
+  }
+  
+  
+
 }
