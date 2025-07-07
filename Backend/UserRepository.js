@@ -2,8 +2,6 @@ import sql from 'mssql'
 import { dbSettings } from './config.js'
 import bcrypt from 'bcrypt'
 
-
-
 export class UserRepository {
   static async connect() {
     try {
@@ -76,6 +74,7 @@ export class UserRepository {
   }
 
 
+
   static validateCorreo(correo) {
     if (typeof correo !== 'string' || !correo.includes('@')) {
       throw new Error('Correo inválido.')
@@ -87,6 +86,45 @@ export class UserRepository {
       throw new Error('La contraseña debe tener al menos 8 caracteres.')
     }
   }
+
+  static async findByCorreo(correo) {
+    this.validateCorreo(correo);
+
+    const pool = await this.connect();
+
+    const result = await pool.request()
+      .input('correo', sql.NVarChar, correo)
+      .query('SELECT * FROM Estudiante WHERE correo = @correo');
+
+    return result.recordset.length > 0 ? result.recordset[0] : null;
+  }
+  
+  static async updatePassword(correo, nuevaContraseña) {
+    this.validateCorreo(correo);
+    this.validatePassword(nuevaContraseña);
+
+    const pool = await this.connect();
+
+    const result = await pool.request()
+      .input('correo', sql.NVarChar, correo)
+      .input('nuevaContraseña', sql.NVarChar, nuevaContraseña)
+      .query('UPDATE Estudiante SET contraseña = @nuevaContraseña WHERE correo = @correo');
+
+    return result.rowsAffected[0] > 0;
+  }
+
+  // Marca un usuario como verificado
+  static async marcarComoVerificado(correo) {
+    const pool = await this.connect();
+    await pool.request()
+    .input('correo', sql.VarChar, correo)
+    .query('UPDATE Estudiante SET verificado = 1 WHERE correo = @correo');
+  }
+  
+  
+
+}
+
 
   static async getPrerrequisitosGraduacion() {
     const pool = await this.connect()
