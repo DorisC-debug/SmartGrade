@@ -2,6 +2,8 @@ import sql from 'mssql'
 import { dbSettings } from './config.js'
 import bcrypt from 'bcrypt'
 
+
+
 export class UserRepository {
   static async connect() {
     try {
@@ -35,8 +37,6 @@ export class UserRepository {
     if (check.recordset.length > 0) {
       throw new Error('Ya existe un usuario con este correo.')
     }
-
-
     const hashedPassword = await bcrypt.hash(contraseña, 10)
     console.log('→ Contraseña hasheada en create():', hashedPassword)
 
@@ -44,8 +44,9 @@ export class UserRepository {
       .input('nombre', sql.NVarChar, nombre)
       .input('correo', sql.NVarChar, correo)
       .input('contraseña', sql.NVarChar, hashedPassword)
-      .query(`INSERT INTO Estudiante (nombre, correo, contraseña)
-            VALUES (@nombre, @correo, @contraseña)`)
+      .input('verificado', sql.Bit, 0)
+      .query(`INSERT INTO Estudiante (nombre, correo, contraseña, verificado)
+        VALUES (@nombre, @correo, @contraseña, @verificado)`)
 
     return correo
   }
@@ -66,13 +67,17 @@ export class UserRepository {
     const isMatch = await bcrypt.compare(contraseña, user.contraseña);
     if (!isMatch) throw new Error('Contraseña incorrecta.');
 
+    if (!user.verificado) {
+      throw new Error('Tu cuenta aún no ha sido verificada. Revisa tu correo.');
+    }
+
+
     return {
       id: user.id,
       nombre: user.nombre,
       correo: user.correo
     };
   }
-
 
 
   static validateCorreo(correo) {
@@ -82,6 +87,7 @@ export class UserRepository {
   }
 
   static validatePassword(password) {
+    console.log('Contraseña recibida:', password);
     if (typeof password !== 'string' || password.length < 8) {
       throw new Error('La contraseña debe tener al menos 8 caracteres.')
     }
@@ -98,32 +104,34 @@ export class UserRepository {
 
     return result.recordset.length > 0 ? result.recordset[0] : null;
   }
-  
+
   static async updatePassword(correo, nuevaContraseña) {
     this.validateCorreo(correo);
     this.validatePassword(nuevaContraseña);
+
+    const hashedPassword = await bcrypt.hash(nuevaContraseña, 10);
 
     const pool = await this.connect();
 
     const result = await pool.request()
       .input('correo', sql.NVarChar, correo)
-      .input('nuevaContraseña', sql.NVarChar, nuevaContraseña)
+      .input('nuevaContraseña', sql.NVarChar, hashedPassword)
       .query('UPDATE Estudiante SET contraseña = @nuevaContraseña WHERE correo = @correo');
 
     return result.rowsAffected[0] > 0;
   }
 
+
   // Marca un usuario como verificado
   static async marcarComoVerificado(correo) {
     const pool = await this.connect();
     await pool.request()
-    .input('correo', sql.VarChar, correo)
-    .query('UPDATE Estudiante SET verificado = 1 WHERE correo = @correo');
+      .input('correo', sql.VarChar, correo)
+      .query('UPDATE Estudiante SET verificado = 1 WHERE correo = @correo');
   }
-  
-  
 
-}
+
+
 
 
   static async getPrerrequisitosGraduacion() {

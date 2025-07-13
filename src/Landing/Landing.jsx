@@ -108,7 +108,7 @@ export default function Landing({ onStart }) {
             </div>
 
             <footer className="landing-footer">
-                <p>&copy; 2025 - Todos los derechos reservados. Desarrollado por: Doris Castro Jiménez, Prisila Noboa Fructuos y Albert Cordero Parra</p>
+                <p>&copy; 2025 - Todos los derechos reservados. Desarrollado por: Doris Castro Jiménez, Prisila Noboa Fructuoso y Albert Cordero Parra</p>
             </footer>
         </div>
     );

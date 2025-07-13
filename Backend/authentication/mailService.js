@@ -1,26 +1,41 @@
-// backend/mailService.js
 import nodemailer from 'nodemailer';
+import dotenv from "dotenv";
+dotenv.config();
+export const enviarCorreoConToken = async (correoDestino, token, tipo = 'recuperacion') => {
+  try {
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      },
+    });
 
-export const enviarCorreoRecuperacion = async (correoDestino, token) => {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'tu_correo@gmail.com',
-      pass: 'tu_contraseña_de_aplicacion',
-    },
-  });
+    const asunto = tipo === 'verificacion' ? 'Verificación de cuenta' : 'Recuperación de contraseña';
+    const textoPrincipal = tipo === 'verificacion'
+      ? 'Haz clic en el siguiente enlace para verificar tu cuenta:'
+      : 'Haz clic en el siguiente enlace para restablecer tu contraseña:';
 
-  const mailOptions = {
-    from: 'tu_correo@gmail.com',
-    to: correoDestino,
-    subject: 'Recuperación de contraseña',
-    html: `
-      <h3>Recuperación de contraseña</h3>
-      <p>Haz clic en el siguiente enlace para restablecer tu contraseña:</p>
-      <a href="http://localhost:5173/resetear/${token}">Restablecer contraseña</a>
-      <p>Si no solicitaste este cambio, ignora este correo.</p>
-    `,
-  };
+    const url = tipo === 'verificacion'
+      ? `http://localhost:5173/verificar/${token}`
+      : `http://localhost:5173/resetear/${token}`;
 
-  await transporter.sendMail(mailOptions);
+    const mailOptions = {
+      from: `SmartGrade <${process.env.EMAIL_USER}>`,
+      to: correoDestino,
+      subject: asunto,
+      html: `
+        <h3>${asunto}</h3>
+        <p>${textoPrincipal}</p>
+        <a href="${url}">${url}</a>
+        <p>Si no solicitaste este correo, puedes ignorarlo.</p>
+      `,
+    };
+
+    const result = await transporter.sendMail(mailOptions);
+    console.log(`✔️ Correo enviado a ${correoDestino}:`, result.response);
+  } catch (error) {
+    console.error('❌ Error al enviar el correo:', error);
+    throw new Error('No se pudo enviar el correo');
+  }
 };

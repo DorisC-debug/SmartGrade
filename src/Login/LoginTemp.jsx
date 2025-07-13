@@ -4,7 +4,8 @@ import { useState } from 'react'
 import axios from 'axios'
 import './Login.css'
 
-export function Login({ onLoginSuccess, switchToRegister }) {
+
+export function Login({ onLoginSuccess, switchToRegister, switchToForgot }) {
   const [correo, setCorreo] = useState('')
   const [contraseña, setContraseña] = useState('')
   const [error, setError] = useState('')
@@ -61,9 +62,9 @@ export function Login({ onLoginSuccess, switchToRegister }) {
           </div>
 
           <button className="btn" type="submit">Ingresar</button>
-          <a href="#" className="btn-link" onClick={() => setView('forgot')}>¿Olvidaste tu contraseña?</a>
-
-
+          <a href="#" className="btn-link" onClick={switchToForgot}>
+            ¿Olvidaste tu contraseña?
+          </a>
 
 
           {/* botón para ir a registro */}
@@ -73,6 +74,9 @@ export function Login({ onLoginSuccess, switchToRegister }) {
           </div>
         </form>
       </div>
+
+
+
 
     </div>
 

@@ -5,7 +5,7 @@ import ReactMarkdown from 'react-markdown';
 
 export default function Chatbot() {
   const [messages, setMessages] = React.useState([
-    { role: 'assistant', content: 'Hola, soy SmartGrade, tu asistente académico. Te ayudaré a ver la ruta crítica de tu carrera, por favor responde las preguntas como se te indique.' },
+    { role: 'assistant', content: 'Hola, soy SmartGrade, tu asistente académico. Te ayudaré a ver la ruta crítica de tu carrera, para la creación de la misma, por favor responde las preguntas como se te indique. Al final de su creación, puedes preguntar lo que gustes.' },
     { role: 'assistant', content: '¿Cuál es tu carrera? (Ej: ingeniería industrial)' }
   ]);
   const [input, setInput] = React.useState('');
@@ -29,6 +29,32 @@ export default function Chatbot() {
     return null;
   };
 
+  const manejarErrorConIA = async (paso, mensajeUsuario) => {
+    try {
+      const respuestaIA = await axios.post('https://api.openai.com/v1/chat/completions', {
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: `Eres un manejador de errores para un chatbot académico. El usuario está en el paso: "${paso}". Si escribe algo fuera del contexto de este paso, explícale amablemente qué debe responder y cómo puede continuar.`
+          },
+          { role: 'user', content: mensajeUsuario }
+        ]
+      }, {
+        headers: {
+          Authorization: `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const mensaje = respuestaIA.data.choices[0].message.content;
+      setMessages((prev) => [...prev, { role: 'assistant', content: mensaje }]);
+    } catch (err) {
+      setMessages((prev) => [...prev, { role: 'assistant', content: 'No pude ayudarte con IA esta vez. Intenta responder de nuevo como se indica.' }]);
+      console.error('Error IA fallback:', err);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const texto = input.trim();
@@ -43,7 +69,7 @@ export default function Chatbot() {
     if (estado === 'pedir_carrera') {
       const idDetectado = detectarIdCarrera(texto);
       if (!idDetectado) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: 'No pude identificar la carrera. Intenta escribir algo parecido a: ingeniería industrial, eléctrica, etc.' }]);
+        await manejarErrorConIA('pedir la carrera', texto);
         return;
       }
 
@@ -56,8 +82,8 @@ export default function Chatbot() {
 
       setIdCarrera(idDetectado);
       setMessages((prev) => [...prev,
-      { role: 'assistant', content: `Carrera detectada: **${nombreCarrera}**` },
-      { role: 'assistant', content: '¿Has cursado alguna materia? (sí/no)' }
+        { role: 'assistant', content: `Carrera detectada: **${nombreCarrera}**` },
+        { role: 'assistant', content: '¿Has cursado alguna materia? (sí/no)' }
       ]);
       setEstado('inicio');
       return;
@@ -67,14 +93,21 @@ export default function Chatbot() {
       if (textoLower.includes('sí') || textoLower.includes('si')) {
         setEstado('pedir_materias');
         setMessages((prev) => [...prev, { role: 'assistant', content: '¿Cuáles materias has cursado? Escríbelas separadas por coma.' }]);
-      } else {
+      } else if (textoLower.includes('no')) {
         setEstado('pedir_max');
         setMessages((prev) => [...prev, { role: 'assistant', content: '¿Cuántas materias deseas cursar por cuatrimestre?' }]);
+      } else {
+        await manejarErrorConIA('preguntar si ha cursado materias (sí o no)', texto);
       }
       return;
     }
 
     if (estado === 'pedir_materias') {
+      if (!texto.includes(',')) {
+        await manejarErrorConIA('pedir las materias cursadas separadas por coma', texto);
+        return;
+      }
+
       const posibles = texto.split(',').map(m => m.trim());
       setMateriasCursadas(posibles);
       setEstado('pedir_max');
@@ -85,7 +118,7 @@ export default function Chatbot() {
     if (estado === 'pedir_max') {
       const num = parseInt(texto);
       if (isNaN(num) || num <= 0) {
-        setMessages((prev) => [...prev, { role: 'assistant', content: 'Por favor escribe un número válido mayor a 0.' }]);
+        await manejarErrorConIA('pedir cuántas materias desea cursar por cuatrimestre (un número mayor a 0)', texto);
         return;
       }
 
@@ -172,6 +205,7 @@ export default function Chatbot() {
       return;
     }
 
+    // Fallback general para preguntas al final del flujo (estado === 'final')
     try {
       const openaiResponse = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: 'gpt-3.5-turbo',

@@ -395,3 +395,77 @@
 .landing-footer {
     animation-delay: 1.4s;
 }
+
+
+.transparent-background {
+  opacity: 0.3;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(255 255 255 / 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+/* Anima tus letras según quieras (ejemplo simple) */
+.loader span {
+  display: inline-block;
+  animation: hideAndSeek 1s alternate infinite cubic-bezier(0.86, 0, 0.07, 1);
+  transform: translateY(4rem);
+}
+
+.loader .s {
+  animation-delay: 0ms;
+}
+
+.loader .m {
+  animation-delay: 70ms;
+}
+
+.loader .a {
+  animation-delay: 140ms;
+}
+
+.loader .r {
+  animation-delay: 210ms;
+}
+
+.loader .t {
+  animation-delay: 280ms;
+}
+
+.loader .g {
+  animation-delay: 350ms;
+}
+
+.loader .r2 {
+  animation-delay: 420ms;
+}
+
+.loader .a2 {
+  animation-delay: 490ms;
+}
+
+.loader .d {
+  animation-delay: 560ms;
+}
+
+.loader .e {
+  animation-delay: 630ms;
+}
+
+@keyframes hideAndSeek {
+  from {
+    transform: translateY(4rem);
+  }
+
+  to {
+    transform: translateY(0);
+  }
+}

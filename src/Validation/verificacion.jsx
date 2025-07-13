@@ -4,7 +4,7 @@ import axios from 'axios';
 
 export function Verificar({ setView }) {
   const { token } = useParams();
-  const navigate = useNavigate(); // ✅ Navegador
+  const navigate = useNavigate();
   const [mensaje, setMensaje] = useState('Verificando tu cuenta...');
   const [verificado, setVerificado] = useState(false);
 

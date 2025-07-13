@@ -8,9 +8,11 @@ dotenv.config();
 import jwt from 'jsonwebtoken'
 import { enviarCorreoConToken } from './authentication/mailService.js'
 
+
 const app = express()
 app.use(cors())
 app.use(express.json())
+
 
 app.get('/api/ruta-critica/:idCarrera', async (req, res) => {
   const idCarrera = parseInt(req.params.idCarrera);
@@ -31,7 +33,7 @@ app.get('/api/ruta-critica/:idCarrera', async (req, res) => {
     const resultado = calcularRutaOrdenadaConCorrequisitos(materiasCarrera, limite);
 
     return res.json({
-      ruta: resultado.cuatrimestres, // Este es un array
+      ruta: resultado.cuatrimestres,
       totalCuatrimestres: resultado.totalCuatrimestres,
       rutaCritica: resultado.rutaCritica
     });
@@ -66,13 +68,23 @@ app.post('/register', async (req, res) => {
       correo,
       contraseña
     });
+    console.log('→ Correo registrado:', correoRegistrado);
+    const token = jwt.sign({ nombre, correo }, process.env.JWT_SECRET, {
+      expiresIn: '24h'
+    });
 
-    res.status(201).json({ mensaje: 'Usuario registrado', correo: correoRegistrado });
+
+    await enviarCorreoConToken(correo, token, 'verificacion');
+    console.log('→ Token de verificación generado:', token);
+
+    console.log('✅ Correo de verificación enviado a:', correo);
+    res.status(201).json({ mensaje: 'Te hemos enviado un enlace para verificar tu cuenta.', correo: correoRegistrado });
   } catch (error) {
     console.error('❌ Error en /register:', error.message);
     res.status(500).json({ error: error.message });
   }
 });
+
 
 app.post('/logout', (req, res) => {
   // Aquí podrías invalidar sesión o token, dependiendo del método de auth que uses
@@ -89,7 +101,8 @@ app.post('/recuperar', async (req, res) => {
 
 
     const token = jwt.sign({ correo }, process.env.JWT_SECRET, { expiresIn: '24h' });
-    await enviarCorreoConToken(correo, token);
+    await enviarCorreoConToken(correo, token, 'recuperacion');
+
 
     res.send({ message: 'Correo de recuperación enviado con éxito' });
   } catch (error) {
@@ -101,13 +114,22 @@ app.post('/recuperar', async (req, res) => {
 app.post('/resetear/:token', async (req, res) => {
   const { token } = req.params;
   const { nuevaContraseña } = req.body;
+  console.log('→ Token recibido en /resetear:', token);
+  console.log('→ Nueva contraseña recibida:', nuevaContraseña);
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    await UserRepository.updatePassword(decoded.correo, nuevaContraseña);
+    const correo = decoded.correo;
+
+    const actualizado = await UserRepository.updatePassword(correo, nuevaContraseña);
+    if (!actualizado) {
+      return res.status(404).json({ message: 'No se pudo actualizar la contraseña.' });
+    }
+
     res.send({ message: 'Contraseña actualizada correctamente' });
   } catch (error) {
-    res.status(400).send('Token inválido o expirado');
+    console.error('Error en /resetear:', error);
+    return res.status(400).json({ message: error.message || 'Token inválido o expirado' });
   }
 });
 

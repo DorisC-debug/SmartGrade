@@ -108,67 +108,106 @@
   margin-bottom: 0.8rem;
   font-size: 0.9rem;
 }
-
-.switch-view {
-  font-size: 17px;
-  padding: 0.6em 3em;
-  margin-bottom: 5%;
-  font-weight: 500;
-  background: #006dac;
-  color: white;
-  border: none;
-  position: relative;
-  overflow: hidden;
-  border-radius: 0.6em;
-  cursor: pointer;
-
-
-
-}
-
-.switch-view {
-  color: #ffffff;
-  align-items: center;
-
-}
-
-.switch-container {
-  margin-top: 15px;
+.form-container {
+  max-width: 400px; 
+  margin: 60px auto;
+  padding: 30px 25px; 
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
   text-align: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+.form-container h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 20px;
+}
+
+.form-container p {
+  font-size: 16px;
+  color: #666;
+  margin: 15px 0 20px;
+  line-height: 1.4;
+}
+
+.form-container input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin: 10px 0 20px;
+  border: 1.8px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.form-container input[type="password"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.form-container button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #007bff;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s ease;
+}
+
+.form-container button:hover {
+  background-color: #0056b3;
+}
+
+.form-container button {
+  max-width: 220px;
+  margin: 20px auto 0;
+  display: block;
+}
+
+/* Ajustes responsivos */
 @media (max-width: 768px) {
-  .card {
-    width: 90%;
-    padding: 2rem 1.5rem;
-    margin: 60px auto;
+  .form-container {
+    margin: 40px 20px;
+    padding: 25px 20px;
   }
-
-  .title {
-    font-size: 2rem;
+  
+  .form-container h2 {
+    font-size: 22px;
   }
-
-  .btn {
-    font-size: 0.9em;
+  
+  .form-container input[type="password"] {
+    font-size: 15px;
+    padding: 10px 12px;
   }
-
-  .switch-view {
-    padding: 0.6em 2em;
-    font-size: 0.9rem;
+  
+  .form-container button {
+    font-size: 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .title {
-    font-size: 1.6rem;
+  .form-container {
+    margin: 30px 15px;
+    padding: 20px 15px;
   }
-
-  .card {
-    padding: 1.5rem 1rem;
+  
+  .form-container h2 {
+    font-size: 20px;
   }
-
-  .switch-view {
-    font-size: 0.85rem;
-    padding: 0.5em 1.5em;
+  
+  .form-container input[type="password"] {
+    font-size: 14px;
+    padding: 9px 10px;
+  }
+  
+  .form-container button {
+    font-size: 15px;
   }
 }
