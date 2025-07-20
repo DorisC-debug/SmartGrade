@@ -13,8 +13,8 @@ export class UserRepository {
         server: dbSettings.server,
         database: dbSettings.database,
         options: {
-          encrypt: false,
-          trustServerCertificate: true
+          encrypt: true,
+          trustServerCertificate: false
         }
       })
       return pool

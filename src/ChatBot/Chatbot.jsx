@@ -66,6 +66,9 @@ export default function Chatbot() {
 
     const textoLower = texto.toLowerCase();
 
+
+
+
     if (estado === 'pedir_carrera') {
       const idDetectado = detectarIdCarrera(texto);
       if (!idDetectado) {
@@ -114,6 +117,7 @@ export default function Chatbot() {
       setMessages((prev) => [...prev, { role: 'assistant', content: '¿Cuántas materias deseas cursar por cuatrimestre?' }]);
       return;
     }
+
 
     if (estado === 'pedir_max') {
       const num = parseInt(texto);
@@ -195,6 +199,7 @@ export default function Chatbot() {
             content: 'Recuerda que los prerrequisitos son materias que debes aprobar antes de cursar otras. Asegúrate de cumplir con ellos para evitar inconvenientes en tu trayectoria académica. Muchas gracias por usar SmartGrade.'
           }]);
         }
+    setEstado('final');
       } catch (err) {
         setMessages(prev => [...prev, {
           role: 'assistant',

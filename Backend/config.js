@@ -1,15 +1,15 @@
-
+// config.js
 export const dbSettings = {
   user: 'usuario1',
-  password: 'doris19',
-  server: 'DESKTOP-16NKLSN',
+  password: 'D@ris27022006',
+  server: 'smartgrade.database.windows.net',
   database: 'SmartGrade',
   options: {
-    encrypt: false,
-    trustServerCertificate: true
+    encrypt: true,
+    trustServerCertificate: false
   }
-
 };
+
 
 
 export default {
