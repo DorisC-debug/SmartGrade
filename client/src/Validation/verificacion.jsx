@@ -11,7 +11,7 @@ export function Verificar({ setView }) {
   useEffect(() => {
     const verificar = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/verificar/${token}`);
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/verificar/${token}`);
         setMensaje(res.data || 'Cuenta verificada correctamente.');
         setVerificado(true);
 

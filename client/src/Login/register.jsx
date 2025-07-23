@@ -15,7 +15,7 @@ export function Register({ onRegisterSuccess, switchToLogin }) {
     setError('')
 
     try {
-      const response = await axios.post('http://localhost:3000/register', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/register`, {
         nombre,
         correo,
         contraseña

@@ -130,10 +130,10 @@ export default function Chatbot() {
       setEstado('final');
       setMessages((prev) => [...prev, { role: 'assistant', content: 'Calculando ruta crítica basada en tus datos...' }]);
 
-      const correo = localStorage.getItem('correo');
+       const correo = localStorage.getItem('correo');
 
       try {
-        const response = await axios.get('http://localhost:3000/api/estudiante-id', {
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/estudiante-id`, {
           params: { correo }
         });
         const estudianteId = response.data.id;
@@ -144,8 +144,7 @@ export default function Chatbot() {
           materiasCursadas: materiasCursadas
         });
 
-
-       const [rutaCritica, prerrequisitos] = await Promise.all([
+        const [rutaCritica, prerrequisitos] = await Promise.all([
           axios.get(`${import.meta.env.VITE_API_URL}/api/ruta-critica/${idCarrera}?limitePorCuatrimestre=${num}`),
           axios.get(`${import.meta.env.VITE_API_URL}/api/prerrequisitos`)
         ]);

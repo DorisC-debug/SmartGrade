@@ -14,7 +14,7 @@ export function ResetPassword() {
       return setMensaje('Las contraseñas no coinciden.');
     }
     try {
-      await axios.post(`http://localhost:3000/resetear/${token}`, { nuevaClave: clave });
+      await axios.post(`${import.meta.env.VITE_API_URL}/resetear/${token}`, { nuevaClave: clave });
       setMensaje('Contraseña actualizada.');
     } catch {
       setMensaje('Error al actualizar.');

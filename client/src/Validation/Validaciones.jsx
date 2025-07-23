@@ -10,7 +10,7 @@ export function Recuperar({ volver }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post('http://localhost:3000/recuperar', { correo });
+      await axios.post(`${import.meta.env.VITE_API_URL}/recuperar`, { correo });
       setMensaje('Si el correo existe, se envió un enlace.');
     } catch {
       setMensaje('Error al enviar correo.');
