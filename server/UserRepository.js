@@ -61,7 +61,7 @@ export class UserRepository {
       .query('SELECT * FROM Estudiante WHERE correo = @correo');
 
     const user = result.recordset[0];
-    if (!user) throw new Error('Usuario no encontrado.');
+    if (!user) throw new Error('Usuario no encontrado, por favor regístrate.');
 
     // Comparar la contraseña con bcrypt
     const isMatch = await bcrypt.compare(contraseña, user.contraseña);

@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import dotenv from "dotenv";
 dotenv.config();
+
 export const enviarCorreoConToken = async (correoDestino, token, tipo = 'recuperacion') => {
   try {
     const transporter = nodemailer.createTransport({
@@ -9,6 +10,8 @@ export const enviarCorreoConToken = async (correoDestino, token, tipo = 'recuper
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASS
       },
+   
+      family: 4
     });
 
     const asunto = tipo === 'verificacion' ? 'Verificación de cuenta' : 'Recuperación de contraseña';
@@ -16,9 +19,11 @@ export const enviarCorreoConToken = async (correoDestino, token, tipo = 'recuper
       ? 'Haz clic en el siguiente enlace para verificar tu cuenta:'
       : 'Haz clic en el siguiente enlace para restablecer tu contraseña:';
 
+    const baseURL = process.env.BACKEND_URL;
+
     const url = tipo === 'verificacion'
-      ? `http://localhost:5173/verificar/${token}`
-      : `http://localhost:5173/resetear/${token}`;
+      ? `${baseURL}/verificar/${token}`
+      : `${baseURL}/resetear/${token}`;
 
     const mailOptions = {
       from: `SmartGrade <${process.env.EMAIL_USER}>`,
