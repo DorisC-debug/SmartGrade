@@ -91,6 +91,13 @@ app.post('/logout', (req, res) => {
   res.send({ message: 'Logout exitoso' })
 })
 
+app.get('/resetear/:token', (req, res) => {
+  const frontendUrl = process.env.FRONTEND_URL || 'https://smartgrade-3.onrender.com';
+  const token = req.params.token;
+  res.redirect(`${frontendUrl}/resetear/${token}`);
+});
+
+
 app.post('/recuperar', async (req, res) => {
   const { correo } = req.body;
 
@@ -214,3 +221,6 @@ app.post('/api/guardar-datos-chatbot', async (req, res) => {
     res.status(500).json({ error: 'No se pudieron guardar los datos del chatbot.' });
   }
 });
+
+
+
