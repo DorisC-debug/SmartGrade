@@ -136,18 +136,18 @@ export default function Chatbot() {
         const response = await axios.get('http://localhost:3000/api/estudiante-id', {
           params: { correo }
         });
-
         const estudianteId = response.data.id;
 
-        await axios.post('http://localhost:3000/api/guardar-datos-chatbot', {
+        await axios.post(`${import.meta.env.VITE_API_URL}/api/guardar-datos-chatbot`, {
           estudiante_id: estudianteId,
           carrera_id: idCarrera,
           materiasCursadas: materiasCursadas
         });
 
-        const [rutaCritica, prerrequisitos] = await Promise.all([
-          axios.get(`http://localhost:3000/api/ruta-critica/${idCarrera}?limitePorCuatrimestre=${num}`),
-          axios.get('http://localhost:3000/api/prerrequisitos')
+
+       const [rutaCritica, prerrequisitos] = await Promise.all([
+          axios.get(`${import.meta.env.VITE_API_URL}/api/ruta-critica/${idCarrera}?limitePorCuatrimestre=${num}`),
+          axios.get(`${import.meta.env.VITE_API_URL}/api/prerrequisitos`)
         ]);
 
         const cuatrimestres = rutaCritica.data?.ruta;

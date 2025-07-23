@@ -231,7 +231,7 @@ export class UserRepository {
         }
       }
     } catch (error) {
-      console.error("❌ Error real:", error); // Mostrar el error completo en consola
+      console.error("Error real:", error); // Mostrar el error completo en consola
       throw new Error("Error al guardar datos del chatbot");
     }
   }

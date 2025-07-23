@@ -13,10 +13,10 @@ export function Login({ onLoginSuccess, switchToRegister, switchToForgot }) {
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const response = await axios.post('http://localhost:3000/login', {
-        correo,
-        contraseña
-      })
+const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, {
+  correo,
+  contraseña
+})
 
       localStorage.setItem('correo', correo)
       onLoginSuccess(response.data)  // enviar datos usuario
