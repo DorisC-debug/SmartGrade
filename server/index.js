@@ -10,11 +10,7 @@ import { enviarCorreoConToken } from './authentication/mailService.js'
 
 
 const app = express()
-app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://smartgrade-5.onrender.com',
-  credentials: true
-}));
-
+app.use(cors())
 app.use(express.json())
 
 
@@ -95,11 +91,6 @@ app.post('/logout', (req, res) => {
   res.send({ message: 'Logout exitoso' })
 })
 
-app.get('/resetear/:token', (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'https://smartgrade-5.onrender.com';
-  const token = req.params.token;
-  res.redirect(`${frontendUrl}/resetear/${token}`);
-});
 
 
 app.post('/recuperar', async (req, res) => {
@@ -121,6 +112,13 @@ app.post('/recuperar', async (req, res) => {
     res.status(500).send('Error al enviar correo');
   }
 });
+
+app.get('/resetear/:token', (req, res) => {
+  const frontendUrl = process.env.BACKEND_URL || 'https://smartgrade-5.onrender.com';
+  const token = req.params.token;
+  res.redirect(`${frontendUrl}/resetear/${token}`);
+});
+
 
 app.post('/resetear/:token', async (req, res) => {
   const { token } = req.params;
