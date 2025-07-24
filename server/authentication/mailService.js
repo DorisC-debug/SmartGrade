@@ -19,7 +19,7 @@ export const enviarCorreoConToken = async (correoDestino, token, tipo = 'recuper
       ? 'Haz clic en el siguiente enlace para verificar tu cuenta:'
       : 'Haz clic en el siguiente enlace para restablecer tu contraseña:';
 
-    const baseURL = process.env.FRONTEND_URL;
+    const baseURL = process.env.BACKEND_URL;
 
     const url = tipo === 'verificacion'
       ? `${baseURL}/verificar/${token}`
