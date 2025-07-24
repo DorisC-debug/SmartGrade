@@ -17,7 +17,7 @@ export function ResetPassword() {
     }
     try {
       console.log('Clave a enviar:', clave);
-      await axios.post(`${import.meta.env.VITE_API_URL}/resetear/${token}`, { nuevaContraseña: clave });
+      await axios.post(`${import.meta.env.FRONTEND_URL}/resetear/${token}`, { nuevaContraseña: clave });
       setMensaje('Contraseña actualizada.');
       // Redirigir al login después de un pequeño delay para que vea el mensaje
       setTimeout(() => {
