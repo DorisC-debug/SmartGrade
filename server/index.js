@@ -92,7 +92,7 @@ app.post('/logout', (req, res) => {
 })
 
 app.get('/resetear/:token', (req, res) => {
-  const frontendUrl = process.env.FRONTEND_URL || 'https://smartgrade-3.onrender.com';
+  const frontendUrl = process.env.FRONTEND_URL || 'https://smartgrade-qf5r.onrender.com';
   const token = req.params.token;
   res.redirect(`${frontendUrl}/resetear/${token}`);
 });
