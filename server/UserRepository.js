@@ -131,9 +131,6 @@ export class UserRepository {
   }
 
 
-
-
-
   static async getPrerrequisitosGraduacion() {
     const pool = await this.connect()
 
