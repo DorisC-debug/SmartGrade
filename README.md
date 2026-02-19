@@ -12,7 +12,7 @@ SmartGrade is an interactive web platform that functions as an **academic chatbo
 ## Technologies
 
 - **Frontend:** HTML, CSS, JavaScript
-- **Backend:** Node.js
+- **Backend:** Node.js, SQL Server, Express
 - **Additional Tools:** OpenAI API
 
 ## Installation
